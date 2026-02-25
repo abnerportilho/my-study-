@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useStudyData } from './hooks/useStudyData';
 import { ActiveTimer } from './components/ActiveTimer';
 import { DayModal } from './components/DayModal';
+import { EvolutionChart } from './components/EvolutionChart';
 import { formatDurationShort } from './utils/time';
 
 const MONTHS = [
@@ -16,6 +17,7 @@ function getDaysInMonth(year: number, month: number) {
 export default function App() {
   const { sessions, activeSession, startSession, stopSession, deleteSession } = useStudyData();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'calendar' | 'chart'>('calendar');
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -42,15 +44,31 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white pb-32">
-      <header className="pt-20 pb-12 px-6 max-w-7xl mx-auto">
-        <h1 className="font-display text-4xl md:text-6xl lg:text-8xl uppercase tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">
+      <header className="pt-20 pb-12 px-6 max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8">
+        <h1 className="font-display text-4xl md:text-6xl lg:text-8xl uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">
           my <span className="text-[#0055FF]">study</span>
         </h1>
+        
+        <div className="flex gap-2 bg-[#1A1A1A] p-1.5 rounded-2xl border border-white/10">
+          <button 
+            onClick={() => setActiveTab('calendar')}
+            className={`px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${activeTab === 'calendar' ? 'bg-[#0055FF] text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
+          >
+            Calendário
+          </button>
+          <button 
+            onClick={() => setActiveTab('chart')}
+            className={`px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${activeTab === 'chart' ? 'bg-[#0055FF] text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
+          >
+            Gráfico de Evolução
+          </button>
+        </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {MONTHS.map((monthName, monthIndex) => {
+        {activeTab === 'calendar' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {MONTHS.map((monthName, monthIndex) => {
             const daysInMonth = getDaysInMonth(year, monthIndex);
             const firstDayOfWeek = new Date(year, monthIndex, 1).getDay(); // 0 = Sunday
             
@@ -101,6 +119,9 @@ export default function App() {
             );
           })}
         </div>
+        ) : (
+          <EvolutionChart sessions={sessions} year={year} />
+        )}
       </main>
 
       {selectedDate && (
