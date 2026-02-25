@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { StudySession } from '../types';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { motion } from 'motion/react';
 
 interface EvolutionChartProps {
   sessions: StudySession[];
@@ -84,7 +85,12 @@ export function EvolutionChart({ sessions, year }: EvolutionChartProps) {
   };
 
   return (
-    <div className="bg-[#1A1A1A] border border-white/10 rounded-3xl p-6 md:p-8">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="bg-[#1A1A1A] border border-white/10 rounded-3xl p-6 md:p-8"
+    >
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <h2 className="font-display text-2xl uppercase tracking-widest text-white">Evolução</h2>
         
@@ -137,10 +143,12 @@ export function EvolutionChart({ sessions, year }: EvolutionChartProps) {
               strokeWidth={3}
               dot={false}
               activeDot={{ r: 6, fill: '#0055FF', stroke: '#fff', strokeWidth: 2 }}
+              animationDuration={1500}
+              animationEasing="ease-out"
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </motion.div>
   );
 }
