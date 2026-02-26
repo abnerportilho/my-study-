@@ -4,4 +4,5 @@ export interface StudySession {
   startTime: number;
   endTime: number | null;
   duration: number; // in milliseconds
+  subject?: string;
 }

@@ -21,8 +21,8 @@ export function ActiveTimer({ session, onStop }: ActiveTimerProps) {
   return (
     <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-[#1A1A1A] border border-white/10 rounded-full px-6 py-3 flex items-center gap-6 shadow-2xl z-50">
       <div className="flex flex-col">
-        <span className="text-[10px] uppercase tracking-widest text-gray-400 font-display">Sessão Ativa • {session.date}</span>
-        <span className="font-mono text-2xl font-bold text-[#0055FF]">{formatDuration(elapsed)}</span>
+        <span className="text-[10px] uppercase tracking-widest text-[#0055FF] font-bold">{session.subject || 'Sessão Ativa'}</span>
+        <span className="font-mono text-2xl font-bold text-white">{formatDuration(elapsed)}</span>
       </div>
       <button 
         onClick={onStop}

@@ -17,7 +17,8 @@ export function EvolutionChart({ sessions, year }: EvolutionChartProps) {
     const map = new Map<string, number>();
 
     sessions.forEach(session => {
-      const date = new Date(session.date);
+      const [y, m, d] = session.date.split('-').map(Number);
+      const date = new Date(y, m - 1, d);
       // Ensure we only process sessions for the selected year
       if (date.getFullYear() !== year) return;
 

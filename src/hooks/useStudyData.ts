@@ -1,15 +1,47 @@
 import { useState, useEffect } from 'react';
 import { StudySession } from '../types';
 
+const DEFAULT_SESSIONS: StudySession[] = [
+  {
+    id: 'mock-1',
+    date: '2026-02-24',
+    startTime: new Date('2026-02-24T10:00:00').getTime(),
+    endTime: new Date('2026-02-24T11:30:00').getTime(),
+    duration: 90 * 60 * 1000, // 1h 30m
+    subject: 'Lógica de Programação'
+  },
+  {
+    id: 'mock-2',
+    date: '2026-02-25',
+    startTime: new Date('2026-02-25T14:00:00').getTime(),
+    endTime: new Date('2026-02-25T15:14:00').getTime(),
+    duration: 74 * 60 * 1000, // 1h 14m
+    subject: 'React & TypeScript'
+  }
+];
+
 export function useStudyData() {
   const [sessions, setSessions] = useState<StudySession[]>(() => {
-    const saved = localStorage.getItem('chronos_sessions');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('chronos_sessions');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.length > 0 ? parsed : DEFAULT_SESSIONS;
+      }
+    } catch (e) {
+      console.error('Failed to parse sessions', e);
+    }
+    return DEFAULT_SESSIONS;
   });
 
   const [activeSession, setActiveSession] = useState<StudySession | null>(() => {
-    const saved = localStorage.getItem('chronos_active_session');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('chronos_active_session');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      console.error('Failed to parse active session', e);
+      return null;
+    }
   });
 
   useEffect(() => {
@@ -37,7 +69,7 @@ export function useStudyData() {
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
-  const startSession = (date: string) => {
+  const startSession = (date: string, subject: string = 'Estudo Geral') => {
     if (activeSession) return;
     const newSession: StudySession = {
       id: Date.now().toString(),
@@ -45,6 +77,7 @@ export function useStudyData() {
       startTime: Date.now(),
       endTime: null,
       duration: 0,
+      subject,
     };
     setActiveSession(newSession);
   };
